@@ -1,0 +1,13 @@
+{
+  "name": "next-test",
+  "author": "yoshi0518",
+  "version": "1.0.0",
+  "description": "",
+  "packageManager": "pnpm@10.8.0",
+  "engines": {
+    "node": ">=22.14.0",
+    "npm": "please_use_pnpm_instead",
+    "pnpm": ">=10.8.0"
+  },
+  "scripts": {}
+}
