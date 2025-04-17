@@ -2,6 +2,14 @@
 
 ## 検証内容
 
+| 名称  | 内容                                   |
+| ----- | -------------------------------------- |
+| Test1 | Next.js 初期設定、ディレクトリ構成など |
+| Test2 | Supabase                               |
+| Test3 | microCMS                               |
+| Test4 | SendGrid                               |
+| Test5 | Conform                                |
+
 ## 開発環境準備
 
 ```bash
