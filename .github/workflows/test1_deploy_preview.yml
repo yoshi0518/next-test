@@ -1,4 +1,4 @@
-name: [Test1] Deploy Preview
+name: 【Test1】Deploy Preview
 
 on:
   push:

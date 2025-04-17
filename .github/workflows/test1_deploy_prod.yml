@@ -1,4 +1,4 @@
-name: [Test1] Deploy Prod
+name: 【Test1】Deploy Prod
 
 on:
   push:
