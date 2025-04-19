@@ -58,7 +58,7 @@ const eslintConfig = [
     },
   },
   {
-    files: ['**/next-auth.d.ts', '**/supabase.d.ts'],
+    files: ['**/next-auth.d.ts', '**/supabase.ts'],
     rules: {
       '@typescript-eslint/consistent-type-definitions': 'off',
       '@typescript-eslint/no-redundant-type-constituents': 'off',
