@@ -25,7 +25,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({
       lang="ja"
       className={notoSansJP.className}
     >
-      <body>{children}</body>
+      <body className="p-4">{children}</body>
     </html>
   );
 };
