@@ -1,5 +1,5 @@
-import { HomeContainer } from '@/features/home/components/home-container';
+import { Home } from '@/features/home/components';
 
-const Page: React.FC = () => <HomeContainer />;
+const Page: React.FC = () => <Home />;
 
 export default Page;
