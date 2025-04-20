@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
 import { Toaster } from '@/common/components/ui';
-import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import '@/common/styles/globals.css';
 
@@ -32,7 +31,6 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({
           <h1 className="mb-4 text-3xl font-bold underline">Test3</h1>
           <div>{children}</div>
           <Toaster />
-          <SpeedInsights />
         </div>
       </body>
     </html>
