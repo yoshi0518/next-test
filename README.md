@@ -5,10 +5,9 @@
 | 名称  | 内容                                   |
 | ----- | -------------------------------------- |
 | Test1 | Next.js 初期設定、ディレクトリ構成など |
-| Test2 | Supabase                               |
+| Test2 | Supabase、SendGrid                     |
 | Test3 | Conform                                |
-| Test4 | SendGrid                               |
-| Test5 | microCMS                               |
+| Test4 | microCMS                               |
 
 ## 開発環境準備
 
