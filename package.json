@@ -16,6 +16,8 @@
     "fmt:fix": "pnpm -r fmt:fix",
     "typecheck": "pnpm -r typecheck",
     "test1": "pnpm -F \"test1\"",
-    "test2": "pnpm -F \"test2\""
+    "test2": "pnpm -F \"test2\"",
+    "test3": "pnpm -F \"test3\"",
+    "test4": "pnpm -F \"test4\""
   }
 }

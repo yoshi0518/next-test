@@ -1,12 +1,12 @@
-name: 【Test1】Check
+name: 【Test2】Check
 
 on:
   push:
     branches-ignore:
       - main
     paths:
-      - "website/test1/**"
-      - ".github/workflows/test1_*.yml"
+      - "website/test2/**"
+      - ".github/workflows/test2_*.yml"
 
 env:
   NODE_VERSION: "22.14.0"
@@ -33,7 +33,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
-      - run: pnpm test1 lint
+      - run: pnpm test2 lint
 
   format:
     needs: setup
@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
-      - run: pnpm test1 fmt
+      - run: pnpm test2 fmt
 
   typecheck:
     needs: setup
@@ -55,4 +55,4 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           pnpm-version: ${{ env.PNPM_VERSION }}
-      - run: pnpm test1 typecheck
+      - run: pnpm test2 typecheck

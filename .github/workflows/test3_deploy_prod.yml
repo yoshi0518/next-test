@@ -1,12 +1,12 @@
-name: 【Test1】Deploy Preview
+name: 【Test3】Deploy Prod
 
 on:
   push:
-    branches-ignore:
+    branches:
       - main
     paths:
-      - "website/test1/**"
-      - ".github/workflows/test1_*.yml"
+      - "website/test3/**"
+      - ".github/workflows/test3_*.yml"
 
 env:
   NODE_VERSION: "22.14.0"
@@ -17,7 +17,7 @@ permissions:
   deployments: write
 
 jobs:
-  deploy-preview:
+  deploy-production:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,37 +33,37 @@ jobs:
         run: pnpm add --global vercel@latest
 
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST1_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST3_PROJECT_ID }}
 
       - name: Set Vercel Environment Variables
         run: |
-          vercel env rm DEBUG preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
-          echo "${{ secrets.DEBUG_PREVIEW }}" | vercel env add DEBUG preview --token=${{ secrets.VERCEL_TOKEN }}
+          vercel env rm DEBUG production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          echo "${{ secrets.DEBUG_PROD }}" | vercel env add DEBUG production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST1_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST3_PROJECT_ID }}
 
       - name: Verify Vercel Environment Variables
         run: |
           echo "Listing Vercel environment variables:"
-          vercel env ls preview --token=${{ secrets.VERCEL_TOKEN }}
+          vercel env ls production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST1_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST3_PROJECT_ID }}
 
       - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST1_PROJECT_ID }}
-          DEBUG: ${{ secrets.DEBUG_PREVIEW }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST3_PROJECT_ID }}
+          DEBUG: ${{ secrets.DEBUG_PROD }}
 
       - name: Deploy Project Artifacts to Vercel
-        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST1_PROJECT_ID }}
-          DEBUG: ${{ secrets.DEBUG_PREVIEW }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST3_PROJECT_ID }}
+          DEBUG: ${{ secrets.DEBUG_PROD }}
