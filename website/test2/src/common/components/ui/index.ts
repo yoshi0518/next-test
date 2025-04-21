@@ -1,6 +1,7 @@
 export { Button, buttonVariants } from './button';
 export { Input } from './input';
 export { Label } from './label';
+export { RadioGroup, RadioGroupItem } from './radio-group';
 export {
   Select,
   SelectContent,
@@ -14,3 +15,4 @@ export {
   SelectValue,
 } from './select';
 export { Toaster } from './sonner';
+export { Textarea } from './textarea';
