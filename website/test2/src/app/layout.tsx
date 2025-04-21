@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Noto_Sans_JP } from 'next/font/google';
+import { Toaster } from '@/common/components/ui';
 
 import '@/common/styles/globals.css';
 
@@ -25,7 +26,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({
       lang="ja"
       className={notoSansJP.className}
     >
-      <body className="p-4">{children}</body>
+      <body>
+        <div className="p-4">
+          <h1 className="mb-4 text-3xl font-bold underline">Test2</h1>
+          <div>{children}</div>
+          <Toaster />
+        </div>
+      </body>
     </html>
   );
 };
