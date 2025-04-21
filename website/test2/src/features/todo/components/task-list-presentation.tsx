@@ -1,4 +1,4 @@
-import type { taskType } from '@/features/task/types';
+import type { taskType } from '@/features/todo/types';
 
 export const TaskListPresentation: React.FC<{ data: taskType[]; className?: string }> = ({ data, className }) => {
   return (

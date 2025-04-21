@@ -1,5 +1,5 @@
-import { getTaskAllAction } from '@/features/task/action';
-import { TaskListPresentation } from '@/features/task/components/task-list-presentation';
+import { getTaskAllAction } from '@/features/todo/action';
+import { TaskListPresentation } from '@/features/todo/components/task-list-presentation';
 
 export const TaskListContainer: React.FC = async () => {
   const { data, error } = await getTaskAllAction();

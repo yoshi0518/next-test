@@ -1,6 +1,6 @@
 'use server';
 
-import type { taskType } from '@/features/task/types';
+import type { taskType } from '@/features/todo/types';
 import { supabase } from '@/common/lib/supabase';
 
 export const getTaskAllAction = async () => await supabase.schema('public').from('t_task').select('*');
