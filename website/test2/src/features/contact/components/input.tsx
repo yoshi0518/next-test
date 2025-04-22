@@ -5,6 +5,8 @@ import {
   Button,
   Input,
   Label,
+  RadioGroup,
+  RadioGroupItem,
   Select,
   SelectContent,
   SelectItem,
@@ -12,7 +14,7 @@ import {
   SelectValue,
   Textarea,
 } from '@/common/components/ui';
-import { getSelectProps, getSelectTriggerProps } from '@/common/lib/shadcn';
+import { getRadioGroupProps, getSelectProps, getSelectTriggerProps } from '@/common/lib/shadcn';
 import { cn } from '@/common/lib/utils';
 import { action } from '@/features/contact/action';
 import { config } from '@/features/contact/constant';
@@ -190,6 +192,80 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
+              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+            )}
+          >
+            <Label htmlFor={fields.serviceType.id}>ご希望</Label>
+            <RadioGroup
+              {...getRadioGroupProps(fields.serviceType)}
+              defaultValue={fields.serviceType.value ?? fields.serviceType.initialValue}
+              className="flex items-center gap-6"
+            >
+              {config.serviceTypeList.map((serviceType) => (
+                <div
+                  key={serviceType.value}
+                  className="flex items-center"
+                >
+                  <Label className="text-sm">
+                    <RadioGroupItem
+                      key={serviceType.id}
+                      value={serviceType.id}
+                      className="mr-1"
+                    />
+                    {serviceType.value}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+
+            <p
+              id={fields.serviceType.errorId}
+              className="text-sm text-red-500"
+            >
+              {fields.serviceType.errors}
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              'space-y-1.5',
+              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+            )}
+          >
+            <Label htmlFor={fields.propertyType.id}>物件種別</Label>
+            <RadioGroup
+              {...getRadioGroupProps(fields.propertyType)}
+              defaultValue={fields.propertyType.value ?? fields.propertyType.initialValue}
+              className="flex items-center gap-6"
+            >
+              {config.propertyTypeList.map((propertyType) => (
+                <div
+                  key={propertyType.value}
+                  className="flex items-center"
+                >
+                  <Label className="text-sm">
+                    <RadioGroupItem
+                      key={propertyType.id}
+                      value={propertyType.id}
+                      className="mr-1"
+                    />
+                    {propertyType.value}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+
+            <p
+              id={fields.propertyType.errorId}
+              className="text-sm text-red-500"
+            >
+              {fields.propertyType.errors}
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              'space-y-1.5',
               (fields.entryClass.value ?? fields.entryClass.initialValue) !== '0' ? 'hidden' : '',
             )}
           >
@@ -251,7 +327,9 @@ export const ContactInput: React.FC = () => {
         <div className={cn('w-[460px] space-y-2', !isConfirm && 'hidden')}>
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">お問い合わせ項目</Label>
-            <p>{fields.entryClass.value}</p>
+            <p>
+              {config.entryClassList.find((entryClass) => entryClass.id === fields.entryClass.value)?.value ?? '　'}
+            </p>
           </div>
 
           <div className="space-y-1.5">
@@ -277,6 +355,31 @@ export const ContactInput: React.FC = () => {
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">メールアドレス(email)</Label>
             <p>{fields.email.value}</p>
+          </div>
+
+          <div
+            className={cn(
+              'space-y-1.5',
+              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+            )}
+          >
+            <Label className="text-sm font-semibold">ご希望</Label>
+            <p>
+              {config.serviceTypeList.find((serviceType) => serviceType.id === fields.serviceType.value)?.value ?? '　'}
+            </p>
+          </div>
+
+          <div
+            className={cn(
+              'space-y-1.5',
+              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+            )}
+          >
+            <Label className="text-sm font-semibold">物件種別</Label>
+            <p>
+              {config.propertyTypeList.find((propertyType) => propertyType.id === fields.propertyType.value)?.value ??
+                '　'}
+            </p>
           </div>
 
           <div
