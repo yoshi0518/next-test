@@ -2,6 +2,7 @@
 
 import { useActionState, useState } from 'react';
 import {
+  Badge,
   Button,
   Input,
   Label,
@@ -16,12 +17,13 @@ import {
 } from '@/common/components/ui';
 import { getRadioGroupProps, getSelectProps, getSelectTriggerProps } from '@/common/lib/shadcn';
 import { cn } from '@/common/lib/utils';
-import { action } from '@/features/contact/action';
-import { config } from '@/features/contact/constant';
+import { action, getAddressByZipcodeAction } from '@/features/contact/action';
+import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { formSchema } from '@/features/contact/types';
 import { getFormProps, getInputProps, getTextareaProps, useForm } from '@conform-to/react';
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { FaSpinner } from 'react-icons/fa6';
+import { toast } from 'sonner';
 
 export const ContactInput: React.FC = () => {
   const [lastResult, dispatch, isPending] = useActionState(action, null);
@@ -52,6 +54,24 @@ export const ContactInput: React.FC = () => {
     constraint: getZodConstraint(formSchema),
   });
 
+  // 郵便番号から住所を取得
+  const getAddressByZipcode = async (zipcode: string) => {
+    form.update({ name: fields.address.name, value: '' });
+
+    const response = await getAddressByZipcodeAction(zipcode);
+    if (!response.status) {
+      toast(response.message, {
+        style: { background: '#dc2626', color: '#fff' },
+      });
+      return;
+    }
+
+    form.update({
+      name: fields.address.name,
+      value: `${response.data!.prefecture}${response.data!.city}${response.data!.suburb}`,
+    });
+  };
+
   return (
     <>
       <h2 className="mb-2 text-xl font-bold">問合せフォーム</h2>
@@ -60,9 +80,12 @@ export const ContactInput: React.FC = () => {
         action={dispatch}
       >
         {/* === Input Start === */}
-        <div className={cn('w-[460px] space-y-2', isConfirm && 'hidden')}>
+        <div className={cn('w-[460px] space-y-4', isConfirm && 'hidden')}>
           <div className="space-y-1.5">
-            <Label htmlFor={fields.entryClass.id}>お問い合わせ項目</Label>
+            <Label htmlFor={fields.entryClass.id}>
+              <span>お問い合わせ項目</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
 
             <Select
               {...getSelectProps(fields.entryClass)}
@@ -81,7 +104,7 @@ export const ContactInput: React.FC = () => {
                 key="entry-class-content"
                 className="w-[240px]"
               >
-                {config.entryClassList.map((entryClass) => (
+                {entryClassList.map((entryClass) => (
                   <SelectItem
                     value={entryClass.id}
                     key={entryClass.id}
@@ -101,10 +124,14 @@ export const ContactInput: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor={fields.name.id}>氏名</Label>
+            <Label htmlFor={fields.name.id}>
+              <span>氏名</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
             <Input
               {...getInputProps(fields.name, { type: 'text' })}
               key={fields.name.key}
+              placeholder="鈴木 太郎"
               defaultValue={(lastResult?.initialValue?.name as string) ?? form.initialValue?.name}
             />
             <p
@@ -121,17 +148,18 @@ export const ContactInput: React.FC = () => {
               <Input
                 {...getInputProps(fields.zipcode, { type: 'text' })}
                 key={fields.zipcode.key}
+                placeholder="213-0011"
                 defaultValue={(lastResult?.initialValue?.zipcode as string) ?? form.initialValue?.zipcode}
               />
               <Button
                 variant="outline"
-                onClick={() => {
+                onClick={async () => {
                   form.validate();
                   if (!!fields.zipcode.errors) return;
 
-                  alert('住所取得');
+                  await getAddressByZipcode(fields.zipcode.value!);
                 }}
-                disabled={!!fields.zipcode.errors || !fields.zipcode.value} // 郵便番号
+                disabled={!!fields.zipcode.errors || !fields.zipcode.value}
               >
                 住所取得
               </Button>
@@ -149,6 +177,7 @@ export const ContactInput: React.FC = () => {
             <Input
               {...getInputProps(fields.address, { type: 'text' })}
               key={fields.address.key}
+              placeholder="神奈川県川崎市高津区久本1-1-3"
               defaultValue={(lastResult?.initialValue?.address as string) ?? form.initialValue?.address}
             />
             <p
@@ -164,6 +193,7 @@ export const ContactInput: React.FC = () => {
             <Input
               {...getInputProps(fields.tel, { type: 'tel' })}
               key={fields.tel.key}
+              placeholder="080-123-4567"
               defaultValue={(lastResult?.initialValue?.tel as string) ?? form.initialValue?.tel}
             />
             <p
@@ -175,10 +205,14 @@ export const ContactInput: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor={fields.email.id}>メールアドレス</Label>
+            <Label htmlFor={fields.email.id}>
+              <span>メールアドレス</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
             <Input
               {...getInputProps(fields.email, { type: 'email' })}
               key={fields.email.key}
+              placeholder="contact@n-asset.com"
               defaultValue={(lastResult?.initialValue?.email as string) ?? form.initialValue?.email}
             />
             <p
@@ -195,13 +229,17 @@ export const ContactInput: React.FC = () => {
               (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
-            <Label htmlFor={fields.serviceType.id}>ご希望</Label>
+            <Label htmlFor={fields.serviceType.id}>
+              <span>ご希望</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
             <RadioGroup
               {...getRadioGroupProps(fields.serviceType)}
               defaultValue={fields.serviceType.value ?? fields.serviceType.initialValue}
               className="flex items-center gap-6"
+              onValueChange={() => form.validate()}
             >
-              {config.serviceTypeList.map((serviceType) => (
+              {serviceTypeList.map((serviceType) => (
                 <div
                   key={serviceType.value}
                   className="flex items-center"
@@ -232,13 +270,17 @@ export const ContactInput: React.FC = () => {
               (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
-            <Label htmlFor={fields.propertyType.id}>物件種別</Label>
+            <Label htmlFor={fields.propertyType.id}>
+              <span>物件種別</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
             <RadioGroup
               {...getRadioGroupProps(fields.propertyType)}
               defaultValue={fields.propertyType.value ?? fields.propertyType.initialValue}
               className="flex items-center gap-6"
+              onValueChange={() => form.validate()}
             >
-              {config.propertyTypeList.map((propertyType) => (
+              {propertyTypeList.map((propertyType) => (
                 <div
                   key={propertyType.value}
                   className="flex items-center"
@@ -273,6 +315,7 @@ export const ContactInput: React.FC = () => {
             <Input
               {...getInputProps(fields.area, { type: 'text' })}
               key={fields.area.key}
+              placeholder="溝の口近辺"
               defaultValue={(lastResult?.initialValue?.area as string) ?? form.initialValue?.area}
             />
             <p
@@ -284,10 +327,14 @@ export const ContactInput: React.FC = () => {
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor={fields.contact.id}>お問い合わせ内容</Label>
+            <Label htmlFor={fields.contact.id}>
+              <span>お問い合わせ内容</span>
+              <Badge className="bg-blue-600">必須</Badge>
+            </Label>
             <Textarea
               {...getTextareaProps(fields.contact)}
               key={fields.contact.key}
+              placeholder="お問い合わせ内容をご記入ください"
               defaultValue={(lastResult?.initialValue?.contact as string) ?? form.initialValue?.contact}
             />
             <p
@@ -327,9 +374,7 @@ export const ContactInput: React.FC = () => {
         <div className={cn('w-[460px] space-y-2', !isConfirm && 'hidden')}>
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">お問い合わせ項目</Label>
-            <p>
-              {config.entryClassList.find((entryClass) => entryClass.id === fields.entryClass.value)?.value ?? '　'}
-            </p>
+            <p>{entryClassList.find((entryClass) => entryClass.id === fields.entryClass.value)?.value ?? '　'}</p>
           </div>
 
           <div className="space-y-1.5">
@@ -349,7 +394,7 @@ export const ContactInput: React.FC = () => {
 
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">電話番号</Label>
-            <p>{fields.tel.value}</p>
+            <p>{fields.tel.value ?? '　'}</p>
           </div>
 
           <div className="space-y-1.5">
@@ -364,9 +409,7 @@ export const ContactInput: React.FC = () => {
             )}
           >
             <Label className="text-sm font-semibold">ご希望</Label>
-            <p>
-              {config.serviceTypeList.find((serviceType) => serviceType.id === fields.serviceType.value)?.value ?? '　'}
-            </p>
+            <p>{serviceTypeList.find((serviceType) => serviceType.id === fields.serviceType.value)?.value ?? '　'}</p>
           </div>
 
           <div
@@ -377,8 +420,7 @@ export const ContactInput: React.FC = () => {
           >
             <Label className="text-sm font-semibold">物件種別</Label>
             <p>
-              {config.propertyTypeList.find((propertyType) => propertyType.id === fields.propertyType.value)?.value ??
-                '　'}
+              {propertyTypeList.find((propertyType) => propertyType.id === fields.propertyType.value)?.value ?? '　'}
             </p>
           </div>
 

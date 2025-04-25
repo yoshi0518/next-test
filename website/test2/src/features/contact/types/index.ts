@@ -1,7 +1,8 @@
 import { z } from '@/common/lib/zod';
+import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 
 export const formSchema = z.object({
-  entryClass: z.enum(['0', '1', '2']),
+  entryClass: z.enum(entryClassList.map((item) => item.id) as [string, ...string[]]),
   name: z.string().min(1).max(100),
   zipcode: z.optional(
     z
@@ -17,8 +18,10 @@ export const formSchema = z.object({
       .transform((value) => value.replaceAll('-', '')),
   ),
   email: z.string().email().max(100),
-  serviceType: z.enum(['0', '1', '2']),
-  propertyType: z.enum(['0', '1', '2', '3']),
+  serviceType: z.enum(Object.keys(serviceTypeList) as [string, ...string[]]),
+  propertyType: z.enum(propertyTypeList.map((item) => item.id) as [string, ...string[]]),
   area: z.optional(z.string().max(100)),
   contact: z.string().max(500),
 });
+
+export type formType = z.infer<typeof formSchema>;
