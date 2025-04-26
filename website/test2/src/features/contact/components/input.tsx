@@ -235,6 +235,7 @@ export const ContactInput: React.FC = () => {
             </Label>
             <RadioGroup
               {...getRadioGroupProps(fields.serviceType)}
+              key={fields.serviceType.key}
               defaultValue={fields.serviceType.value ?? fields.serviceType.initialValue}
               className="flex items-center gap-6"
               onValueChange={() => form.validate()}
@@ -276,6 +277,7 @@ export const ContactInput: React.FC = () => {
             </Label>
             <RadioGroup
               {...getRadioGroupProps(fields.propertyType)}
+              key={fields.propertyType.key}
               defaultValue={fields.propertyType.value ?? fields.propertyType.initialValue}
               className="flex items-center gap-6"
               onValueChange={() => form.validate()}
