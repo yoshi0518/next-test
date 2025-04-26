@@ -1,14 +1,17 @@
+import type { Database } from '@/features/contact/types/supabase';
 import { z } from '@/common/lib/zod';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 
 export const formSchema = z.object({
-  entryClass: z.enum(entryClassList.map((item) => item.id) as [string, ...string[]]),
-  name: z.string().min(1).max(100),
+  entryClass: z
+    .enum(entryClassList.map((item) => item.id) as [string, ...string[]])
+    .transform((value) => Number(value)),
+  name: z.string().max(100),
   zipcode: z.optional(
     z
       .string()
       .regex(/^\d{3}-\d{4}$|^\d{7}$/, { message: '郵便番号の書式に誤りがあります' })
-      .transform((value) => (!!value ? value.replaceAll('-', '') : '')),
+      .transform((value) => value.replaceAll('-', '')),
   ),
   address: z.optional(z.string().max(100)),
   tel: z.optional(
@@ -18,10 +21,12 @@ export const formSchema = z.object({
       .transform((value) => value.replaceAll('-', '')),
   ),
   email: z.string().email().max(100),
-  serviceType: z.enum(Object.keys(serviceTypeList) as [string, ...string[]]),
-  propertyType: z.enum(propertyTypeList.map((item) => item.id) as [string, ...string[]]),
+  serviceType: z.enum(Object.keys(serviceTypeList) as [string, ...string[]]).transform((value) => Number(value)),
+  propertyType: z
+    .enum(propertyTypeList.map((item) => item.id) as [string, ...string[]])
+    .transform((value) => Number(value)),
   area: z.optional(z.string().max(100)),
   contact: z.string().max(500),
 });
 
-export type formType = z.infer<typeof formSchema>;
+export type ContactCreateType = Database['test']['Tables']['t_contact']['Insert'];

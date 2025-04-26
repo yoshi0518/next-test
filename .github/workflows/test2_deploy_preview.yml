@@ -43,9 +43,13 @@ jobs:
           vercel env rm DEBUG preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm SUPABASE_URL preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm SUPABASE_ANON_KEY preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm SENDGRID_API_KEY preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm SENDGRID_TO preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           echo "${{ secrets.DEBUG_PREVIEW }}" | vercel env add DEBUG preview --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.TEST2_SUPABASE_URL_PREVIEW }}" | vercel env add SUPABASE_URL preview --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.TEST2_SUPABASE_ANON_KEY_PREVIEW }}" | vercel env add SUPABASE_ANON_KEY preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.SENDGRID_API_KEY_PREVIEW }}" | vercel env add SENDGRID_API_KEY preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.TEST2_SENDGRID_TO_PREVIEW }}" | vercel env add SENDGRID_TO preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
@@ -66,6 +70,8 @@ jobs:
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
           SUPABASE_URL: ${{ secrets.TEST2_SUPABASE_URL_PREVIEW }}
           SUPABASE_ANON_KEY: ${{ secrets.TEST2_SUPABASE_ANON_KEY_PREVIEW }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PREVIEW }}
+          SENDGRID_TO: ${{ secrets.TEST2_SENDGRID_TO_PREVIEW }}
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
@@ -75,3 +81,5 @@ jobs:
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
           SUPABASE_URL: ${{ secrets.TEST2_SUPABASE_URL_PREVIEW }}
           SUPABASE_ANON_KEY: ${{ secrets.TEST2_SUPABASE_ANON_KEY_PREVIEW }}
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PREVIEW }}
+          SENDGRID_TO: ${{ secrets.TEST2_SENDGRID_TO_PREVIEW }}
