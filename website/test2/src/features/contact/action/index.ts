@@ -3,7 +3,7 @@
 import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
-import { sendMail } from '@/common/lib/sendgrid';
+import { sendMail2 } from '@/common/lib/sendgrid';
 import { currentDt } from '@/common/lib/utils';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { supabase } from '@/features/contact/lib/supabase';
@@ -52,16 +52,16 @@ ${entryClassList.find((item) => Number(item.id) === entryClass)?.value}
 【氏名】
 ${name}
 【住所】
-${zipcode}
-${address}
+${zipcode ?? ''}
+${address ?? ''}
 【電話番号】
-${tel}
+${tel ?? ''}
 【メールアドレス】
 ${email}
 ${
   serviceType === 0
     ? `【希望エリア】
-${area}`
+${area ?? ''}`
     : serviceType === 1
       ? `【ご希望】
 ${serviceTypeList.find((item) => Number(item.id) === serviceType)?.value}
@@ -73,16 +73,26 @@ ${propertyTypeList.find((item) => Number(item.id) === propertyType)?.value}`
 ${contact}`;
 
     // 利用者宛
-    const responseSendMailUser = await sendMail({
+    const responseSendMailUser = await sendMail2({
       subject: `【N-asset】【問い合わせ】${name} 様`,
       from: {
         name: '株式会社エヌアセット',
         email: 'info@n-asset.com',
       },
-      to: email,
-      bcc: 'info@n-asset.com',
-      replyTo: env.SENDGRID_TO,
-      text: `※このメールは自動送信されていますので返信はご遠慮ください。
+      personalizations: [
+        {
+          to: [{ email }],
+          bcc: [{ email: 'info@n-asset.com' }],
+        },
+      ],
+      reply_to: {
+        name: '株式会社エヌアセット',
+        email: env.SENDGRID_TO,
+      },
+      content: [
+        {
+          type: 'text/plain',
+          value: `※このメールは自動送信されていますので返信はご遠慮ください。
 
 ${name} 様
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -95,7 +105,6 @@ ${content}
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ※このメールにお心当たりのない方は、大変お手数ですが、
 　下記連絡先までご連絡ください。
-
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 株式会社エヌアセット（N-ASSET）
 〒213-0011
@@ -106,25 +115,37 @@ FAX：044-877-2879
 アクセス：東急田園都市線 溝の口駅から徒歩1分
 URL：https://www.n-asset.com/
 MAIL：${env.SENDGRID_TO}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      `,
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+        },
+      ],
     });
 
-    if (responseSendMailUser[0].statusCode !== 202)
+    if (!responseSendMailUser.ok)
       return submission.reply({
         formErrors: ['メール送信に失敗しました'],
       });
 
     // 管理者宛
-    const responseSendMailAdmin = await sendMail({
+    const responseSendMailAdmin = await sendMail2({
       subject: `【自社HP】【問い合わせ】${name} 様`,
       from: {
         name: '株式会社エヌアセット',
         email: 'info@n-asset.com',
       },
-      to: env.SENDGRID_TO,
-      bcc: 'info@n-asset.com',
-      text: `${name} 様より下記のお問い合わせを受け付けました。
+      personalizations: [
+        {
+          to: [{ email: env.SENDGRID_TO }],
+          bcc: [{ email: 'info@n-asset.com' }],
+        },
+      ],
+      reply_to: {
+        name: '株式会社エヌアセット',
+        email: env.SENDGRID_TO,
+      },
+      content: [
+        {
+          type: 'text/plain',
+          value: `${name} 様より下記のお問い合わせを受け付けました。
 担当者は対応をお願いします。
 
 ${content}
@@ -139,14 +160,16 @@ FAX：044-877-2879
 アクセス：東急田園都市線 溝の口駅から徒歩1分
 URL：https://www.n-asset.com/
 MAIL：${env.SENDGRID_TO}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      `,
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+        },
+      ],
     });
 
-    if (responseSendMailAdmin[0].statusCode !== 202)
+    if (!responseSendMailAdmin.ok)
       return submission.reply({
         formErrors: ['メール送信に失敗しました'],
       });
+
     // === Sendgridメール送信 End ===
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));

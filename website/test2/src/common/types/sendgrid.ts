@@ -9,3 +9,22 @@ export type SendMailType = {
   replyTo?: string;
   text: string;
 };
+
+type MailAddressType = {
+  name?: string;
+  email: string;
+};
+
+export type SendMailType2 = {
+  subject: string;
+  from: MailAddressType;
+  personalizations: {
+    to: MailAddressType[];
+    bcc: MailAddressType[];
+  }[];
+  reply_to?: MailAddressType;
+  content: {
+    type: string;
+    value: string;
+  }[];
+};
