@@ -21,3 +21,14 @@ export const action = async (_: unknown, formData: FormData) => {
   // 送信完了ページへ遷移
   redirect('/contact/complete');
 };
+
+export const getAddressByZipcodeAction = async (zipcode: string) => {
+  const response = await fetch(`https://postcode.teraren.com/postcodes/${zipcode.replaceAll('-', '')}.json`);
+
+  if (!response.ok) return { status: false, message: '住所取得に失敗しました' };
+
+  return {
+    status: true,
+    data: (await response.json()) as { new: string; prefecture: string; city: string; suburb: string },
+  };
+};
