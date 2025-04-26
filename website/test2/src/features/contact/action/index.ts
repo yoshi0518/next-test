@@ -3,7 +3,7 @@
 import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
-import { sendMail2 } from '@/common/lib/sendgrid';
+import { sendMail } from '@/common/lib/sendgrid';
 import { currentDt } from '@/common/lib/utils';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { supabase } from '@/features/contact/lib/supabase';
@@ -67,13 +67,13 @@ ${area ?? ''}`
 ${serviceTypeList.find((item) => Number(item.id) === serviceType)?.value}
 【物件種別】
 ${propertyTypeList.find((item) => Number(item.id) === propertyType)?.value}`
-      : undefined
+      : ''
 }
 【お問い合わせ内容】
 ${contact}`;
 
     // 利用者宛
-    const responseSendMailUser = await sendMail2({
+    const responseSendMailUser = await sendMail({
       subject: `【N-asset】【問い合わせ】${name} 様`,
       from: {
         name: '株式会社エヌアセット',
@@ -126,7 +126,7 @@ MAIL：${env.SENDGRID_TO}
       });
 
     // 管理者宛
-    const responseSendMailAdmin = await sendMail2({
+    const responseSendMailAdmin = await sendMail({
       subject: `【自社HP】【問い合わせ】${name} 様`,
       from: {
         name: '株式会社エヌアセット',
