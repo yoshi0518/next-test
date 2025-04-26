@@ -8,7 +8,7 @@ const envSchema = z.object({
   SUPABASE_URL: z.string(),
   SUPABASE_ANON_KEY: z.string(),
   SENDGRID_API_KEY: z.string(),
-  SENDGRID_TO: z.string().email(),
+  SENDGRID_TO: z.string(),
 });
 
 const parsedEnv = envSchema.safeParse({
