@@ -10,4 +10,4 @@ export const cn = (...inputs: ClassValue[]) => {
 
 export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
-export const currentDt = () => format(new TZDate('Asia/Tokyo'), 'yyyy-MM-dd HH:mm:ss');
+export const getCurrentDt = (fmt = 'yyyy-MM-dd HH:mm:ss') => format(new TZDate(new Date(), 'Asia/Tokyo'), fmt);

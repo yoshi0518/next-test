@@ -4,7 +4,7 @@ import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
 import { sendMail } from '@/common/lib/sendgrid';
-import { currentDt } from '@/common/lib/utils';
+import { getCurrentDt } from '@/common/lib/utils';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { supabase } from '@/features/contact/lib/supabase';
 import { formSchema } from '@/features/contact/types';
@@ -33,7 +33,7 @@ export const action = async (_: unknown, formData: FormData) => {
       property_type: entryClass === 1 ? propertyType : null,
       area: entryClass === 0 ? (area ?? null) : null,
       contact,
-      created_at: currentDt(),
+      created_at: getCurrentDt(),
     });
 
     if (!!responseSupabase.error)
@@ -120,6 +120,11 @@ MAIL：${env.SENDGRID_TO}
       ],
     });
 
+    console.log('=== responseSendMailUser ===');
+    console.log(responseSendMailUser);
+    console.log('-----');
+    console.log(await responseSendMailUser.json());
+
     if (!responseSendMailUser.ok)
       return submission.reply({
         formErrors: ['メール送信に失敗しました'],
@@ -165,18 +170,23 @@ MAIL：${env.SENDGRID_TO}
       ],
     });
 
+    console.log('=== responseSendMailAdmin ===');
+    console.log(responseSendMailAdmin);
+    console.log('-----');
+    console.log(await responseSendMailAdmin.json());
+
     if (!responseSendMailAdmin.ok)
       return submission.reply({
         formErrors: ['メール送信に失敗しました'],
       });
 
     // === Sendgridメール送信 End ===
+
+    // 送信完了ページへ遷移
+    redirect('/contact/complete');
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));
   }
-
-  // 送信完了ページへ遷移
-  redirect('/contact/complete');
 };
 
 export const getAddressByZipcodeAction = async (zipcode: string) => {
