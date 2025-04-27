@@ -4,7 +4,7 @@ import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
 import { getCurrentDt } from '@/common/lib/utils';
-import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
+import { propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { sendMail } from '@/features/contact/lib/sendgrid';
 import { supabase } from '@/features/contact/lib/supabase';
 import { formSchema } from '@/features/contact/types';
@@ -16,22 +16,35 @@ export const action = async (_: unknown, formData: FormData) => {
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
 
-  const { entryClass, name, zipcode, address, tel, email, serviceType, propertyType, area, contact } = submission.value;
+  const { entryClassNo, entryClassName, name, zipcode, address, tel, email, serviceType, propertyType, area, contact } =
+    submission.value;
   console.log('=== Submission Data ===');
-  console.log({ entryClass, name, zipcode, address, tel, email, serviceType, propertyType, area, contact });
+  console.log({
+    entryClassNo,
+    entryClassName,
+    name,
+    zipcode,
+    address,
+    tel,
+    email,
+    serviceType,
+    propertyType,
+    area,
+    contact,
+  });
 
   try {
     // === Supabaseデータ追加 Start ===
     const responseSupabase = await createContactAction({
-      entry_class: entryClass,
+      entry_class: entryClassNo,
       name,
       zipcode: zipcode ?? null,
       address: address ?? null,
       tel: tel ?? null,
       email,
-      service_type: entryClass === 1 ? serviceType : null,
-      property_type: entryClass === 1 ? propertyType : null,
-      area: entryClass === 0 ? (area ?? null) : null,
+      service_type: entryClassNo === 1 ? serviceType : null,
+      property_type: entryClassNo === 1 ? propertyType : null,
+      area: entryClassNo === 0 ? (area ?? null) : null,
       contact,
       created_at: getCurrentDt(),
     });
@@ -44,7 +57,7 @@ export const action = async (_: unknown, formData: FormData) => {
 
     // === Sendgridメール送信 Start ===
     const dynamicTemplateData = {
-      entry_class: entryClassList.find((item) => Number(item.id) === entryClass)?.value ?? '',
+      entry_class: entryClassName,
       name,
       zipcode: zipcode ?? '　',
       address: address ?? '　',
