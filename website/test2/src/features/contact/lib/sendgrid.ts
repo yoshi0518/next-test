@@ -1,10 +1,9 @@
-import type { SendMailType } from '@/common/types/sendgrid';
+import type { SendMailType } from '@/features/contact/types/sendgrid';
 import { env } from '@/common/env';
 
 export const sendMail = async (data: SendMailType) => {
   return await fetch('https://api.sendgrid.com/v3/mail/send', {
     method: 'POST',
-    // cache: 'no-store',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${env.SENDGRID_API_KEY}`,
