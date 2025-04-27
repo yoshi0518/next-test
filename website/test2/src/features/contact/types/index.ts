@@ -3,9 +3,10 @@ import { z } from '@/common/lib/zod';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 
 export const formSchema = z.object({
-  entryClass: z
+  entryClassNo: z
     .enum(entryClassList.map((item) => item.id) as [string, ...string[]])
     .transform((value) => Number(value)),
+  entryClassName: z.string(),
   name: z.string().max(100),
   zipcode: z.optional(
     z

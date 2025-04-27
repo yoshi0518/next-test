@@ -31,7 +31,8 @@ export const ContactInput: React.FC = () => {
   const [form, fields] = useForm({
     // 初期値
     defaultValue: {
-      entryClass: '',
+      entryClassNo: '',
+      entryClassName: '',
       name: '',
       zipcode: '',
       address: '',
@@ -82,19 +83,26 @@ export const ContactInput: React.FC = () => {
         {/* === Input Start === */}
         <div className={cn('w-[460px] space-y-4', isConfirm && 'hidden')}>
           <div className="space-y-1.5">
-            <Label htmlFor={fields.entryClass.id}>
+            <Label htmlFor={fields.entryClassNo.id}>
               <span>お問い合わせ項目</span>
               <Badge className="bg-blue-600">必須</Badge>
             </Label>
 
             <Select
-              {...getSelectProps(fields.entryClass)}
-              key={fields.entryClass.key}
-              defaultValue={fields.entryClass.value ?? fields.entryClass.initialValue}
-              onValueChange={(value) => form.update({ name: fields.entryClass.name, value })}
+              {...getSelectProps(fields.entryClassNo)}
+              key={fields.entryClassNo.key}
+              defaultValue={fields.entryClassNo.value ?? fields.entryClassNo.initialValue}
+              onValueChange={(value) => {
+                form.update({ name: fields.entryClassNo.name, value });
+                form.update({
+                  name: fields.entryClassName.name,
+                  value:
+                    entryClassList.find((entryClass) => entryClass.id === fields.entryClassNo.value)?.value ?? '　',
+                });
+              }}
             >
               <SelectTrigger
-                {...getSelectTriggerProps(fields.entryClass)}
+                {...getSelectTriggerProps(fields.entryClassNo)}
                 key="entry-class-trigger"
                 className="w-[240px]"
               >
@@ -116,11 +124,17 @@ export const ContactInput: React.FC = () => {
             </Select>
 
             <p
-              id={fields.entryClass.errorId}
+              id={fields.entryClassNo.errorId}
               className="text-sm text-red-500"
             >
-              {fields.entryClass.errors}
+              {fields.entryClassNo.errors}
             </p>
+
+            <Input
+              {...getInputProps(fields.entryClassName, { type: 'hidden' })}
+              key={fields.entryClassName.key}
+              defaultValue={(lastResult?.initialValue?.entryClassName as string) ?? form.initialValue?.entryClassName}
+            />
           </div>
 
           <div className="space-y-1.5">
@@ -226,7 +240,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
             <Label htmlFor={fields.serviceType.id}>
@@ -268,7 +282,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
             <Label htmlFor={fields.propertyType.id}>
@@ -310,7 +324,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '0' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '0' ? 'hidden' : '',
             )}
           >
             <Label htmlFor={fields.area.id}>希望エリア</Label>
@@ -376,7 +390,7 @@ export const ContactInput: React.FC = () => {
         <div className={cn('w-[460px] space-y-2', !isConfirm && 'hidden')}>
           <div className="space-y-1.5">
             <Label className="text-sm font-semibold">お問い合わせ項目</Label>
-            <p>{entryClassList.find((entryClass) => entryClass.id === fields.entryClass.value)?.value ?? '　'}</p>
+            <p>{fields.entryClassName.value}</p>
           </div>
 
           <div className="space-y-1.5">
@@ -407,7 +421,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
             <Label className="text-sm font-semibold">ご希望</Label>
@@ -417,7 +431,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '1' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '1' ? 'hidden' : '',
             )}
           >
             <Label className="text-sm font-semibold">物件種別</Label>
@@ -429,7 +443,7 @@ export const ContactInput: React.FC = () => {
           <div
             className={cn(
               'space-y-1.5',
-              (fields.entryClass.value ?? fields.entryClass.initialValue) !== '0' ? 'hidden' : '',
+              (fields.entryClassNo.value ?? fields.entryClassNo.initialValue) !== '0' ? 'hidden' : '',
             )}
           >
             <Label className="text-sm font-semibold">希望エリア</Label>
