@@ -3,9 +3,9 @@
 import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
-import { sendMail } from '@/common/lib/sendgrid';
-import { currentDt } from '@/common/lib/utils';
+import { getCurrentDt } from '@/common/lib/utils';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
+import { sendMail } from '@/features/contact/lib/sendgrid';
 import { supabase } from '@/features/contact/lib/supabase';
 import { formSchema } from '@/features/contact/types';
 import { parseWithZod } from '@conform-to/zod';
@@ -33,7 +33,7 @@ export const action = async (_: unknown, formData: FormData) => {
       property_type: entryClass === 1 ? propertyType : null,
       area: entryClass === 0 ? (area ?? null) : null,
       contact,
-      created_at: currentDt(),
+      created_at: getCurrentDt(),
     });
 
     if (!!responseSupabase.error)
@@ -43,110 +43,50 @@ export const action = async (_: unknown, formData: FormData) => {
     // === Supabaseデータ追加 End ===
 
     // === Sendgridメール送信 Start ===
-    const content = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-■■　ご送信内容の確認　■■
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    const dynamicTemplateData = {
+      entry_class: entryClassList.find((item) => Number(item.id) === entryClass)?.value ?? '',
+      name,
+      zipcode: zipcode ?? '　',
+      address: address ?? '　',
+      tel: tel ?? '　',
+      email,
+      service_type: serviceTypeList.find((item) => Number(item.id) === serviceType)?.value ?? '',
+      property_type: propertyTypeList.find((item) => Number(item.id) === propertyType)?.value ?? '',
+      area: area ?? '　',
+      contact: contact.split('\n'),
+    };
 
-【お問い合わせ項目】
-${entryClassList.find((item) => Number(item.id) === entryClass)?.value}
-【氏名】
-${name}
-【住所】
-${zipcode}
-${address}
-【電話番号】
-${tel}
-【メールアドレス】
-${email}
-${
-  serviceType === 0
-    ? `【希望エリア】
-${area}`
-    : serviceType === 1
-      ? `【ご希望】
-${serviceTypeList.find((item) => Number(item.id) === serviceType)?.value}
-【物件種別】
-${propertyTypeList.find((item) => Number(item.id) === propertyType)?.value}`
-      : undefined
-}
-【お問い合わせ内容】
-${contact}`;
-
-    // 利用者宛
-    const responseSendMailUser = await sendMail({
-      subject: `【N-asset】【問い合わせ】${name} 様`,
+    const responseSendMail = await sendMail({
+      template_id: 'd-8673fa79d39d4cc2b11b68ce9a186d11',
       from: {
         name: '株式会社エヌアセット',
         email: 'info@n-asset.com',
       },
-      to: email,
-      bcc: 'info@n-asset.com',
-      replyTo: env.SENDGRID_TO,
-      text: `※このメールは自動送信されていますので返信はご遠慮ください。
-
-${name} 様
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-この度はお問い合わせいただきまして、ありがとうございます。
-改めて担当者よりご連絡をさせていただきます。
-
-${content}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-※このメールにお心当たりのない方は、大変お手数ですが、
-　下記連絡先までご連絡ください。
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-株式会社エヌアセット（N-ASSET）
-〒213-0011
-神奈川県川崎市高津区久本1-1-3
-TEL：044-873-7188
-FAX：044-877-2879
-営業時間：10:00～18:00（毎週水曜日定休）
-アクセス：東急田園都市線 溝の口駅から徒歩1分
-URL：https://www.n-asset.com/
-MAIL：${env.SENDGRID_TO}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      `,
-    });
-
-    if (responseSendMailUser[0].statusCode !== 202)
-      return submission.reply({
-        formErrors: ['メール送信に失敗しました'],
-      });
-
-    // 管理者宛
-    const responseSendMailAdmin = await sendMail({
-      subject: `【自社HP】【問い合わせ】${name} 様`,
-      from: {
+      personalizations: [
+        // 利用者宛
+        {
+          to: [{ email }],
+          bcc: [{ email: 'info@n-asset.com' }],
+          dynamic_template_data: { ...dynamicTemplateData, send_type: 'user' },
+        },
+        // 管理者宛
+        {
+          to: [{ email: env.SENDGRID_TO }],
+          bcc: [{ email: 'info@n-asset.com' }],
+          dynamic_template_data: { ...dynamicTemplateData, send_type: 'admin' },
+        },
+      ],
+      reply_to: {
         name: '株式会社エヌアセット',
-        email: 'info@n-asset.com',
+        email: env.SENDGRID_TO,
       },
-      to: env.SENDGRID_TO,
-      bcc: 'info@n-asset.com',
-      text: `${name} 様より下記のお問い合わせを受け付けました。
-担当者は対応をお願いします。
-
-${content}
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-株式会社エヌアセット（N-ASSET）
-〒213-0011
-神奈川県川崎市高津区久本1-1-3
-TEL：044-873-7188
-FAX：044-877-2879
-営業時間：10:00～18:00（毎週水曜日定休）
-アクセス：東急田園都市線 溝の口駅から徒歩1分
-URL：https://www.n-asset.com/
-MAIL：${env.SENDGRID_TO}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-      `,
     });
 
-    if (responseSendMailAdmin[0].statusCode !== 202)
+    if (!responseSendMail.ok)
       return submission.reply({
         formErrors: ['メール送信に失敗しました'],
       });
+
     // === Sendgridメール送信 End ===
   } catch (error) {
     console.error(JSON.stringify(error, null, 2));
