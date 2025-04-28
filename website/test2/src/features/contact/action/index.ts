@@ -4,7 +4,6 @@ import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
 import { getCurrentDt } from '@/common/lib/utils';
-import { propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { sendMail } from '@/features/contact/lib/sendgrid';
 import { supabase } from '@/features/contact/lib/supabase';
 import { formSchema } from '@/features/contact/types';
@@ -16,8 +15,21 @@ export const action = async (_: unknown, formData: FormData) => {
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
 
-  const { entryClassNo, entryClassName, name, zipcode, address, tel, email, serviceType, propertyType, area, contact } =
-    submission.value;
+  const {
+    entryClassNo,
+    entryClassName,
+    name,
+    zipcode,
+    address,
+    tel,
+    email,
+    serviceTypeNo,
+    serviceTypeName,
+    propertyTypeNo,
+    propertyTypeName,
+    area,
+    contact,
+  } = submission.value;
   console.log('=== Submission Data ===');
   console.log({
     entryClassNo,
@@ -27,8 +39,10 @@ export const action = async (_: unknown, formData: FormData) => {
     address,
     tel,
     email,
-    serviceType,
-    propertyType,
+    serviceTypeNo,
+    serviceTypeName,
+    propertyTypeNo,
+    propertyTypeName,
     area,
     contact,
   });
@@ -42,8 +56,8 @@ export const action = async (_: unknown, formData: FormData) => {
       address: address ?? null,
       tel: tel ?? null,
       email,
-      service_type: entryClassNo === 1 ? serviceType : null,
-      property_type: entryClassNo === 1 ? propertyType : null,
+      service_type: entryClassNo === 1 ? serviceTypeNo : null,
+      property_type: entryClassNo === 1 ? propertyTypeNo : null,
       area: entryClassNo === 0 ? (area ?? null) : null,
       contact,
       created_at: getCurrentDt(),
@@ -63,14 +77,14 @@ export const action = async (_: unknown, formData: FormData) => {
       address: address ?? '　',
       tel: tel ?? '　',
       email,
-      service_type: serviceTypeList.find((item) => Number(item.id) === serviceType)?.value ?? '',
-      property_type: propertyTypeList.find((item) => Number(item.id) === propertyType)?.value ?? '',
+      service_type: serviceTypeName,
+      property_type: propertyTypeName,
       area: area ?? '　',
       contact: contact.split('\n'),
     };
 
     const responseSendMail = await sendMail({
-      template_id: 'd-8673fa79d39d4cc2b11b68ce9a186d11',
+      template_id: env.SENDGRID_TEMPLATE_ID,
       from: {
         name: '株式会社エヌアセット',
         email: 'info@n-asset.com',
