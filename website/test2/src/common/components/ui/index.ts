@@ -25,6 +25,7 @@ export {
   SheetTitle,
   SheetDescription,
 } from './sheet';
+export { Switch } from './switch';
 export { Toaster } from './sonner';
 export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from './table';
 export { Textarea } from './textarea';
