@@ -44,12 +44,10 @@ jobs:
           vercel env rm SUPABASE_URL production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm SUPABASE_ANON_KEY production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm SENDGRID_API_KEY production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
-          vercel env rm SENDGRID_TO production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           echo "${{ secrets.DEBUG_PROD }}" | vercel env add DEBUG production --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.TEST2_SUPABASE_URL_PROD }}" | vercel env add SUPABASE_URL production --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.TEST2_SUPABASE_ANON_KEY_PROD }}" | vercel env add SUPABASE_ANON_KEY production --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.SENDGRID_API_KEY_PROD }}" | vercel env add SENDGRID_API_KEY production --token=${{ secrets.VERCEL_TOKEN }}
-          echo "${{ secrets.TEST2_SENDGRID_TO_PROD }}" | vercel env add SENDGRID_TO production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
@@ -71,7 +69,6 @@ jobs:
           SUPABASE_URL: ${{ secrets.TEST2_SUPABASE_URL_PROD }}
           SUPABASE_ANON_KEY: ${{ secrets.TEST2_SUPABASE_ANON_KEY_PROD }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PROD }}
-          SENDGRID_TO: ${{ secrets.TEST2_SENDGRID_TO_PROD }}
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
@@ -82,4 +79,3 @@ jobs:
           SUPABASE_URL: ${{ secrets.TEST2_SUPABASE_URL_PROD }}
           SUPABASE_ANON_KEY: ${{ secrets.TEST2_SUPABASE_ANON_KEY_PROD }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PROD }}
-          SENDGRID_TO: ${{ secrets.TEST2_SENDGRID_TO_PROD }}

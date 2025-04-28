@@ -2,9 +2,7 @@
 
 import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
-import { env } from '@/common/env';
 import { getCurrentDt } from '@/common/lib/utils';
-import { propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { sendMail } from '@/features/contact/lib/sendgrid';
 import { supabase } from '@/features/contact/lib/supabase';
 import { formSchema } from '@/features/contact/types';
@@ -16,10 +14,7 @@ export const action = async (_: unknown, formData: FormData) => {
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
 
-  const { entryClassNo, entryClassName, name, zipcode, address, tel, email, serviceType, propertyType, area, contact } =
-    submission.value;
-  console.log('=== Submission Data ===');
-  console.log({
+  const {
     entryClassNo,
     entryClassName,
     name,
@@ -27,11 +22,29 @@ export const action = async (_: unknown, formData: FormData) => {
     address,
     tel,
     email,
-    serviceType,
-    propertyType,
+    serviceTypeNo,
+    serviceTypeName,
+    propertyTypeNo,
+    propertyTypeName,
     area,
     contact,
-  });
+  } = submission.value;
+  // console.log('=== Submission Data ===');
+  // console.log({
+  //   entryClassNo,
+  //   entryClassName,
+  //   name,
+  //   zipcode,
+  //   address,
+  //   tel,
+  //   email,
+  //   serviceTypeNo,
+  //   serviceTypeName,
+  //   propertyTypeNo,
+  //   propertyTypeName,
+  //   area,
+  //   contact,
+  // });
 
   try {
     // === Supabaseデータ追加 Start ===
@@ -42,8 +55,8 @@ export const action = async (_: unknown, formData: FormData) => {
       address: address ?? null,
       tel: tel ?? null,
       email,
-      service_type: entryClassNo === 1 ? serviceType : null,
-      property_type: entryClassNo === 1 ? propertyType : null,
+      service_type: entryClassNo === 1 ? serviceTypeNo : null,
+      property_type: entryClassNo === 1 ? propertyTypeNo : null,
       area: entryClassNo === 0 ? (area ?? null) : null,
       contact,
       created_at: getCurrentDt(),
@@ -63,13 +76,12 @@ export const action = async (_: unknown, formData: FormData) => {
       address: address ?? '　',
       tel: tel ?? '　',
       email,
-      service_type: serviceTypeList.find((item) => Number(item.id) === serviceType)?.value ?? '',
-      property_type: propertyTypeList.find((item) => Number(item.id) === propertyType)?.value ?? '',
+      service_type: serviceTypeName,
+      property_type: propertyTypeName,
       area: area ?? '　',
-      contact: contact.split('\n'),
+      contact: contact.split('\r\n'),
     };
-
-    const responseSendMail = await sendMail({
+    const data = {
       template_id: 'd-8673fa79d39d4cc2b11b68ce9a186d11',
       from: {
         name: '株式会社エヌアセット',
@@ -84,16 +96,23 @@ export const action = async (_: unknown, formData: FormData) => {
         },
         // 管理者宛
         {
-          to: [{ email: env.SENDGRID_TO }],
+          to: [{ email: 'oshirase@n-asset.com' }],
           bcc: [{ email: 'info@n-asset.com' }],
           dynamic_template_data: { ...dynamicTemplateData, send_type: 'admin' },
         },
       ],
       reply_to: {
         name: '株式会社エヌアセット',
-        email: env.SENDGRID_TO,
+        email: 'oshirase@n-asset.com',
       },
-    });
+    };
+    const responseSendMail = await sendMail(data);
+
+    console.log('=== SendMail(data) ===');
+    console.log(JSON.stringify(data, null, 2));
+    console.log('=== SendMail(response) ===');
+    console.log(JSON.stringify(responseSendMail, null, 2));
+    console.log(JSON.stringify(await responseSendMail.json(), null, 2));
 
     if (!responseSendMail.ok)
       return submission.reply({
@@ -109,7 +128,7 @@ export const action = async (_: unknown, formData: FormData) => {
   redirect('/contact/complete');
 };
 
-export const getAddressByZipcodeAction = async (zipcode: string) => {
+export const getAddressAction = async (zipcode: string) => {
   const response = await fetch(`https://postcode.teraren.com/postcodes/${zipcode.replaceAll('-', '')}.json`);
 
   if (!response.ok)

@@ -22,10 +22,12 @@ export const formSchema = z.object({
       .transform((value) => value.replaceAll('-', '')),
   ),
   email: z.string().email().max(100),
-  serviceType: z.enum(Object.keys(serviceTypeList) as [string, ...string[]]).transform((value) => Number(value)),
-  propertyType: z
+  serviceTypeNo: z.enum(Object.keys(serviceTypeList) as [string, ...string[]]).transform((value) => Number(value)),
+  serviceTypeName: z.string(),
+  propertyTypeNo: z
     .enum(propertyTypeList.map((item) => item.id) as [string, ...string[]])
     .transform((value) => Number(value)),
+  propertyTypeName: z.string(),
   area: z.optional(z.string().max(100)),
   contact: z.string().max(500),
 });
