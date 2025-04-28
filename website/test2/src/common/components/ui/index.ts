@@ -15,5 +15,16 @@ export {
   SelectTrigger,
   SelectValue,
 } from './select';
+export {
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
+} from './sheet';
 export { Toaster } from './sonner';
+export { Table, TableHeader, TableBody, TableFooter, TableHead, TableRow, TableCell, TableCaption } from './table';
 export { Textarea } from './textarea';
