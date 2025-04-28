@@ -4,6 +4,7 @@ import type { TaskReadType } from '@/features/todo/types';
 import {
   Button,
   Input,
+  Label,
   Sheet,
   SheetContent,
   SheetDescription,
@@ -50,18 +51,19 @@ export const TodoList: React.FC<{ data: TaskReadType[] }> = ({ data }) => {
               <SheetTitle>タスク追加</SheetTitle>
               <SheetDescription className="hidden"></SheetDescription>
             </SheetHeader>
-            <div className="p-2">
-              <div>
+            <div className="px-4">
+              <div className="flex items-center gap-1 pb-4">
+                <div className="flex w-[100px] justify-end">
+                  <Label className="text-right">タスク名</Label>
+                </div>
                 <Input
                   type="text"
                   placeholder="タスク名"
                 />
               </div>
-              <div>
-                <Input type="check" />
-                完了
+              <div className="text-right">
+                <Button className="bg-amber-500 hover:bg-amber-400">追加</Button>
               </div>
-              <Button>追加</Button>
             </div>
           </SheetContent>
         </Sheet>
