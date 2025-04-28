@@ -30,22 +30,22 @@ export const action = async (_: unknown, formData: FormData) => {
     area,
     contact,
   } = submission.value;
-  console.log('=== Submission Data ===');
-  console.log({
-    entryClassNo,
-    entryClassName,
-    name,
-    zipcode,
-    address,
-    tel,
-    email,
-    serviceTypeNo,
-    serviceTypeName,
-    propertyTypeNo,
-    propertyTypeName,
-    area,
-    contact,
-  });
+  // console.log('=== Submission Data ===');
+  // console.log({
+  //   entryClassNo,
+  //   entryClassName,
+  //   name,
+  //   zipcode,
+  //   address,
+  //   tel,
+  //   email,
+  //   serviceTypeNo,
+  //   serviceTypeName,
+  //   propertyTypeNo,
+  //   propertyTypeName,
+  //   area,
+  //   contact,
+  // });
 
   try {
     // === Supabaseデータ追加 Start ===
@@ -80,10 +80,9 @@ export const action = async (_: unknown, formData: FormData) => {
       service_type: serviceTypeName,
       property_type: propertyTypeName,
       area: area ?? '　',
-      contact: contact.split('\n'),
+      contact: contact.split('\r\n'),
     };
-
-    const responseSendMail = await sendMail({
+    const data = {
       template_id: env.SENDGRID_TEMPLATE_ID,
       from: {
         name: '株式会社エヌアセット',
@@ -107,7 +106,14 @@ export const action = async (_: unknown, formData: FormData) => {
         name: '株式会社エヌアセット',
         email: env.SENDGRID_TO,
       },
-    });
+    };
+    const responseSendMail = await sendMail(data);
+
+    console.log('=== SendMail(data) ===');
+    console.log(JSON.stringify(data, null, 2));
+    console.log('=== SendMail(response) ===');
+    console.log(JSON.stringify(responseSendMail, null, 2));
+    console.log(JSON.stringify(await responseSendMail.json(), null, 2));
 
     if (!responseSendMail.ok)
       return submission.reply({
@@ -123,7 +129,7 @@ export const action = async (_: unknown, formData: FormData) => {
   redirect('/contact/complete');
 };
 
-export const getAddressByZipcodeAction = async (zipcode: string) => {
+export const getAddressAction = async (zipcode: string) => {
   const response = await fetch(`https://postcode.teraren.com/postcodes/${zipcode.replaceAll('-', '')}.json`);
 
   if (!response.ok)

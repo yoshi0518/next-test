@@ -1,6 +1,6 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useState, useTransition } from 'react';
 import {
   Badge,
   Button,
@@ -17,7 +17,7 @@ import {
 } from '@/common/components/ui';
 import { getRadioGroupProps, getSelectProps, getSelectTriggerProps } from '@/common/lib/shadcn';
 import { cn } from '@/common/lib/utils';
-import { action, getAddressByZipcodeAction } from '@/features/contact/action';
+import { action, getAddressAction } from '@/features/contact/action';
 import { entryClassList, propertyTypeList, serviceTypeList } from '@/features/contact/constant';
 import { formSchema } from '@/features/contact/types';
 import { getFormProps, getInputProps, getTextareaProps, useForm } from '@conform-to/react';
@@ -26,8 +26,9 @@ import { FaSpinner } from 'react-icons/fa6';
 import { toast } from 'sonner';
 
 export const ContactInput: React.FC = () => {
-  const [lastResult, dispatch, isPending] = useActionState(action, null);
+  const [lastResult, dispatch, isPendingForm] = useActionState(action, null);
   const [isConfirm, setIsConfirm] = useState(false);
+  const [isPendingGetAddress, startTransition] = useTransition();
   const [form, fields] = useForm({
     // 初期値
     defaultValue: {
@@ -58,20 +59,20 @@ export const ContactInput: React.FC = () => {
   });
 
   // 郵便番号から住所を取得
-  const getAddressByZipcode = async (zipcode: string) => {
-    form.update({ name: fields.address.name, value: '' });
+  const getAddress = async (zipcode: string) => {
+    startTransition(async () => {
+      const response = await getAddressAction(zipcode);
+      if (!response.status) {
+        toast(response.message, {
+          style: { background: '#dc2626', color: '#fff' },
+        });
+        return;
+      }
 
-    const response = await getAddressByZipcodeAction(zipcode);
-    if (!response.status) {
-      toast(response.message, {
-        style: { background: '#dc2626', color: '#fff' },
+      form.update({
+        name: fields.address.name,
+        value: `${response.data!.prefecture}${response.data!.city}${response.data!.suburb}`,
       });
-      return;
-    }
-
-    form.update({
-      name: fields.address.name,
-      value: `${response.data!.prefecture}${response.data!.city}${response.data!.suburb}`,
     });
   };
 
@@ -132,7 +133,7 @@ export const ContactInput: React.FC = () => {
             </p>
 
             <Input
-              {...getInputProps(fields.entryClassName, { type: 'text' })}
+              {...getInputProps(fields.entryClassName, { type: 'hidden' })}
               key={fields.entryClassName.key}
               defaultValue={(lastResult?.initialValue?.entryClassName as string) ?? form.initialValue?.entryClassName}
             />
@@ -172,11 +173,12 @@ export const ContactInput: React.FC = () => {
                   form.validate();
                   if (!!fields.zipcode.errors) return;
 
-                  await getAddressByZipcode(fields.zipcode.value!);
+                  await getAddress(fields.zipcode.value!);
                 }}
-                disabled={!!fields.zipcode.errors || !fields.zipcode.value}
+                disabled={!!fields.zipcode.errors || !fields.zipcode.value || isPendingGetAddress}
+                className="w-[80px]"
               >
-                住所取得
+                {isPendingGetAddress ? <FaSpinner className="animate-spin" /> : '住所取得'}
               </Button>
             </div>
             <p
@@ -286,7 +288,7 @@ export const ContactInput: React.FC = () => {
             </p>
 
             <Input
-              {...getInputProps(fields.serviceTypeName, { type: 'text' })}
+              {...getInputProps(fields.serviceTypeName, { type: 'hidden' })}
               key={fields.serviceTypeName.key}
               defaultValue={(lastResult?.initialValue?.serviceTypeName as string) ?? form.initialValue?.serviceTypeName}
             />
@@ -341,7 +343,7 @@ export const ContactInput: React.FC = () => {
             </p>
 
             <Input
-              {...getInputProps(fields.propertyTypeName, { type: 'text' })}
+              {...getInputProps(fields.propertyTypeName, { type: 'hidden' })}
               key={fields.propertyTypeName.key}
               defaultValue={
                 (lastResult?.initialValue?.propertyTypeName as string) ?? form.initialValue?.propertyTypeName
@@ -486,7 +488,7 @@ export const ContactInput: React.FC = () => {
               className="w-36 cursor-pointer"
               variant="outline"
               type="button"
-              disabled={isPending}
+              disabled={isPendingForm}
               onClick={() => setIsConfirm(false)}
             >
               修正
@@ -495,9 +497,9 @@ export const ContactInput: React.FC = () => {
             <Button
               className="w-36 cursor-pointer"
               type="submit"
-              disabled={isPending}
+              disabled={isPendingForm}
             >
-              {isPending && <FaSpinner className="animate-spin" />}
+              {isPendingForm && <FaSpinner className="animate-spin" />}
               送信
             </Button>
           </div>
