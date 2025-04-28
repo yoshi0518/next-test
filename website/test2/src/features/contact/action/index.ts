@@ -2,7 +2,6 @@
 
 import type { ContactCreateType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
-import { env } from '@/common/env';
 import { getCurrentDt } from '@/common/lib/utils';
 import { sendMail } from '@/features/contact/lib/sendgrid';
 import { supabase } from '@/features/contact/lib/supabase';
@@ -83,7 +82,7 @@ export const action = async (_: unknown, formData: FormData) => {
       contact: contact.split('\r\n'),
     };
     const data = {
-      template_id: env.SENDGRID_TEMPLATE_ID,
+      template_id: 'd-8673fa79d39d4cc2b11b68ce9a186d11',
       from: {
         name: '株式会社エヌアセット',
         email: 'info@n-asset.com',
@@ -97,14 +96,14 @@ export const action = async (_: unknown, formData: FormData) => {
         },
         // 管理者宛
         {
-          to: [{ email: env.SENDGRID_TO }],
+          to: [{ email: 'oshirase@n-asset.com' }],
           bcc: [{ email: 'info@n-asset.com' }],
           dynamic_template_data: { ...dynamicTemplateData, send_type: 'admin' },
         },
       ],
       reply_to: {
         name: '株式会社エヌアセット',
-        email: env.SENDGRID_TO,
+        email: 'oshirase@n-asset.com',
       },
     };
     const responseSendMail = await sendMail(data);
