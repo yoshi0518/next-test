@@ -1,5 +1,5 @@
-import { TaskListContainer } from '@/features/todo/components/task-list-container';
+import { TodoContainer } from '@/features/todo/components';
 
-const Page: React.FC = () => <TaskListContainer />;
+const Page: React.FC = () => <TodoContainer />;
 
 export default Page;
