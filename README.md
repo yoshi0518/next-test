@@ -5,7 +5,7 @@
 | 名称  | 内容                                   |
 | ----- | -------------------------------------- |
 | Test1 | Next.js 初期設定、ディレクトリ構成など |
-| Test2 | Supabase、SendGrid                     |
+| Test2 | Supabase、SendGrid、Conform            |
 | Test3 | Conform                                |
 | Test4 | microCMS                               |
 

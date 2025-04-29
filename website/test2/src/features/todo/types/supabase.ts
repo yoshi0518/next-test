@@ -3,8 +3,9 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
-      t_task: {
+      t_todo: {
         Row: {
+          closing_date: string | null;
           created_at: string;
           id: number;
           is_done: number | null;
@@ -12,6 +13,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          closing_date?: string | null;
           created_at: string;
           id?: number;
           is_done?: number | null;
@@ -19,6 +21,7 @@ export type Database = {
           updated_at: string;
         };
         Update: {
+          closing_date?: string | null;
           created_at?: string;
           id?: number;
           is_done?: number | null;

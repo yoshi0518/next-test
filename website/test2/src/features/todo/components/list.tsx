@@ -1,74 +1,47 @@
 'use client';
 
-import type { TaskReadType } from '@/features/todo/types';
-import {
-  Button,
-  Input,
-  Label,
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/common/components/ui';
-import { updateTaskListAction } from '@/features/todo/action';
+import type { TodoReadType } from '@/features/todo/types';
+import { useTransition } from 'react';
+import { Button, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, toast } from '@/common/components/ui';
+import { updateTodoListAction } from '@/features/todo/action';
+import { TodoCreate } from '@/features/todo/components/create';
+import { TodoDelete } from '@/features/todo/components/delete';
+import { TodoUpdate } from '@/features/todo/components/update';
 import { format } from 'date-fns';
-import { FaArrowsRotate, FaPlus, FaRegPenToSquare, FaRegTrashCan } from 'react-icons/fa6';
+import { FaArrowsRotate } from 'react-icons/fa6';
 
-export const TodoList: React.FC<{ data: TaskReadType[] }> = ({ data }) => {
+export const TodoList: React.FC<{ data: TodoReadType[] }> = ({ data }) => {
+  const [isPending, startTransition] = useTransition();
+
+  const updateTodoList = async () => {
+    startTransition(async () => {
+      await updateTodoListAction();
+    });
+    toast.success('更新完了', {
+      position: 'top-right',
+      style: {
+        background: 'oklch(62.7% 0.194 149.214)',
+        color: '#fff',
+      },
+    });
+  };
+
   return (
     <>
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-bold">Todo</h2>
           <Button
-            onClick={async () => {
-              console.log('更新');
-              await updateTaskListAction();
-            }}
+            onClick={updateTodoList}
+            disabled={isPending}
             className="bg-green-600 hover:bg-green-500"
           >
-            <FaArrowsRotate />
+            <FaArrowsRotate className={isPending ? 'animate-spin' : ''} />
             更新
           </Button>
         </div>
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button className="bg-amber-500 hover:bg-amber-400">
-              <FaPlus />
-              追加
-            </Button>
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>タスク追加</SheetTitle>
-              <SheetDescription className="hidden"></SheetDescription>
-            </SheetHeader>
-            <div className="px-4">
-              <div className="flex items-center gap-1 pb-4">
-                <div className="flex w-[100px] justify-end">
-                  <Label className="text-right">タスク名</Label>
-                </div>
-                <Input
-                  type="text"
-                  placeholder="タスク名"
-                />
-              </div>
-              <div className="text-right">
-                <Button className="bg-amber-500 hover:bg-amber-400">追加</Button>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <TodoCreate />
       </div>
-
       <Table>
         <TableHeader>
           <TableRow>
@@ -76,6 +49,7 @@ export const TodoList: React.FC<{ data: TaskReadType[] }> = ({ data }) => {
             <TableHead className="w-[60px] text-center">No</TableHead>
             <TableHead>タスク名</TableHead>
             <TableHead className="w-[100px] text-center">状況</TableHead>
+            <TableHead className="w-[140px] text-center">締切日</TableHead>
             <TableHead className="w-[140px] text-center">作成日時</TableHead>
             <TableHead className="w-[140px] text-center">更新日時</TableHead>
           </TableRow>
@@ -85,16 +59,23 @@ export const TodoList: React.FC<{ data: TaskReadType[] }> = ({ data }) => {
             data.map((d) => (
               <TableRow key={d.id}>
                 <TableCell className="flex justify-center gap-0.5">
-                  <Button className="bg-blue-600 hover:bg-blue-500">
-                    <FaRegPenToSquare />
-                  </Button>
-                  <Button className="bg-red-600 hover:bg-red-500">
-                    <FaRegTrashCan />
-                  </Button>
+                  <TodoUpdate
+                    id={d.id}
+                    name={d.name ?? ''}
+                    closingDate={d.closing_date ?? ''}
+                    isDone={d.is_done ?? 0}
+                  />
+                  <TodoDelete
+                    id={d.id}
+                    name={d.name ?? ''}
+                  />
                 </TableCell>
                 <TableCell className="text-center">{d.id}</TableCell>
                 <TableCell>{d.name}</TableCell>
                 <TableCell className="text-center">{d.is_done === 0 ? '未完了' : '完了'}</TableCell>
+                <TableCell className="text-center">
+                  {d.closing_date ? format(d.closing_date, 'yy-MM-dd') : '未選択'}
+                </TableCell>
                 <TableCell className="text-center">{format(d.created_at, 'yy-MM-dd HH:mm')}</TableCell>
                 <TableCell className="text-center">{format(d.updated_at, 'yy-MM-dd HH:mm')}</TableCell>
               </TableRow>
