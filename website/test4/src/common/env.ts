@@ -5,10 +5,14 @@ const envSchema = z.object({
     .string()
     .default('true')
     .transform((value) => !!value),
+  MICROCMS_SERVICE_DOMAIN: z.string(),
+  MICROCMS_API_KEY: z.string(),
 });
 
 const parsedEnv = envSchema.safeParse({
   DEBUG: process.env.DEBUG,
+  MICROCMS_SERVICE_DOMAIN: process.env.MICROCMS_SERVICE_DOMAIN,
+  MICROCMS_API_KEY: process.env.MICROCMS_API_KEY,
 });
 
 if (!parsedEnv.success) {
