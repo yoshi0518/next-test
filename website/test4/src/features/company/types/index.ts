@@ -1,13 +1,14 @@
-import type { MicroCMSImage, MicroCMSListResponse, MicroCMSObjectContent } from 'microcms-js-sdk';
+import type { MicroCMSImage, MicroCMSObjectContent } from 'microcms-js-sdk';
 
-type GroupCompanyListResponseType = MicroCMSListResponse<{
+type GroupCompanyType = {
+  fieldId: string;
   name: string;
   description: string;
   image: MicroCMSImage;
   url: string;
-}>;
+};
 
-export type NassetObjectContentType = {
+export type CompanyInfoType = {
   name: string;
   post: string;
   address: string;
@@ -21,5 +22,5 @@ export type NassetObjectContentType = {
   bank: string;
   employee: string;
   qualifications: string;
-  group_companies: GroupCompanyListResponseType;
+  group_companies: GroupCompanyType[];
 } & MicroCMSObjectContent;
