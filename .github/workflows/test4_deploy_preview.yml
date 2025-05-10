@@ -41,7 +41,11 @@ jobs:
       - name: Set Vercel Environment Variables
         run: |
           vercel env rm DEBUG preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm MICROCMS_SERVICE_DOMAIN preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm MICROCMS_API_KEY preview --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           echo "${{ secrets.DEBUG_PREVIEW }}" | vercel env add DEBUG preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.TEST4_MICROCMS_SERVICE_DOMAIN_PREVIEW }}" | vercel env add MICROCMS_SERVICE_DOMAIN preview --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.TEST4_MICROCMS_API_KEY_PREVIEW }}" | vercel env add MICROCMS_API_KEY preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST4_PROJECT_ID }}
@@ -60,6 +64,8 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST4_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
+          MICROCMS_SERVICE_DOMAIN: ${{ secrets.TEST4_MICROCMS_SERVICE_DOMAIN_PREVIEW }}
+          MICROCMS_API_KEY: ${{ secrets.TEST4_MICROCMS_API_KEY_PREVIEW }}
 
       - name: Deploy Project Artifacts to Vercel
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
@@ -67,3 +73,5 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST4_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
+          MICROCMS_SERVICE_DOMAIN: ${{ secrets.TEST4_MICROCMS_SERVICE_DOMAIN_PREVIEW }}
+          MICROCMS_API_KEY: ${{ secrets.TEST4_MICROCMS_API_KEY_PREVIEW }}
