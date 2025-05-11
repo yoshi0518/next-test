@@ -1,6 +1,7 @@
 'use server';
 
 import type { CompanyInfoType } from '@/features/company/types';
+import { env } from '@/common/env';
 import { microcms } from '@/common/lib/microcms';
 
 export const getCompanyInfo = async () => {
@@ -8,8 +9,10 @@ export const getCompanyInfo = async () => {
     endpoint: 'nasset',
   });
 
-  console.log('=== microCMS nasset ===');
-  console.log({ data });
+  if (env.DEBUG) {
+    console.log('=== getCompanyInfo ===');
+    console.log({ data });
+  }
 
   return data;
 };
