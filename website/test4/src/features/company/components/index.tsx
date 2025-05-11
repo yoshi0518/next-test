@@ -1,3 +1,5 @@
+import Image from 'next/image';
+import Link from 'next/link';
 import { Table, TableBody, TableCell, TableRow } from '@/common/components/ui';
 import { getJstDt } from '@/common/lib/utils';
 import { getCompanyInfo } from '@/features/company/action';
@@ -65,8 +67,18 @@ export const CompanyComponent: React.FC = async () => {
                     >
                       <p>{data.name}</p>
                       <p>{data.description}</p>
-                      <p>{data.url}</p>
-                      <p>{data.image.url}</p>
+                      <Link
+                        href={data.url}
+                        target="_blank"
+                      >
+                        <Image
+                          src={`${data.image.url}?q=60&fm=webp`}
+                          alt={data.name}
+                          width={data.image.width}
+                          height={data.image.height}
+                          className="m-4 border"
+                        />
+                      </Link>
                     </div>
                   );
                 })}
@@ -74,6 +86,14 @@ export const CompanyComponent: React.FC = async () => {
             </TableRow>
           </TableBody>
         </Table>
+      </div>
+      <div>
+        <Link
+          href="/"
+          className="text-blue-500 underline underline-offset-2"
+        >
+          Top
+        </Link>
       </div>
     </>
   );
