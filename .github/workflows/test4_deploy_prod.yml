@@ -7,6 +7,8 @@ on:
     paths:
       - "website/test4/**"
       - ".github/workflows/test4_*.yml"
+  repository_dispatch:
+    types: [microcms_update]
 
 env:
   NODE_VERSION: "22.14.0"
