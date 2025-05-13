@@ -19,6 +19,17 @@ export const getNewsList = async (queries?: MicroCMSQueries) => {
   return data;
 };
 
+export const getNewsIds = async () => {
+  const data = await microcms.getAllContentIds({ endpoint: 'news' });
+
+  if (env.DEBUG) {
+    console.log('=== getNewsIds ===');
+    console.log({ data });
+  }
+
+  return data;
+};
+
 export const getNewsDetail = async (contentId: string, queries?: MicroCMSQueries) => {
   const data = await microcms.getListDetail<NewsType>({
     endpoint: 'news',
