@@ -6,7 +6,7 @@ import { signInGoogleAction } from '../action';
 export const SignInComponent: React.FC = () => {
   return (
     <>
-      <h2 className="mb-2 text-xl font-bold">Signin</h2>
+      <h2 className="mb-2 text-xl font-bold">SignIn</h2>
       <div className="flex gap-4">
         <Button
           onClick={signInGoogleAction}
