@@ -1,7 +1,7 @@
 import { Button } from '@/common/components/ui';
-import { FaGithub, FaGoogle } from 'react-icons/fa6';
+import { FaGoogle } from 'react-icons/fa6';
 
-import { signInGithubAction, signInGoogleAction } from '../action';
+import { signInGoogleAction } from '../action';
 
 export const SignInComponent: React.FC = () => {
   return (
@@ -14,14 +14,6 @@ export const SignInComponent: React.FC = () => {
         >
           <FaGoogle />
           Google
-        </Button>
-
-        <Button
-          onClick={signInGithubAction}
-          className="bg-gray-600 hover:bg-gray-700"
-        >
-          <FaGithub />
-          Github
         </Button>
       </div>
     </>
