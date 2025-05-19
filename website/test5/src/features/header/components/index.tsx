@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { auth } from '@/common/auth';
 import { Button } from '@/common/components/ui';
-import { HeaderAvatar } from '@/features/home/components/avatar';
+import { HeaderAvatar } from '@/features/header/components/avatar';
 
 import { menuItems } from '../constant';
 
