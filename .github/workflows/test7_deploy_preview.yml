@@ -36,7 +36,7 @@ jobs:
         run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
 
       - name: Set Vercel Environment Variables
         run: |
@@ -50,7 +50,7 @@ jobs:
           echo "${{ secrets.SENDGRID_API_KEY_PREVIEW }}" | vercel env add SENDGRID_API_KEY preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
 
       - name: Verify Vercel Environment Variables
         run: |
@@ -58,13 +58,13 @@ jobs:
           vercel env ls preview --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
 
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
           SUPABASE_DATABASE_URL: ${{ secrets.TEST7_SUPABASE_DATABASE_URL_PREVIEW }}
           SUPABASE_SCHEMA: ${{ secrets.TEST7_SUPABASE_SCHEMA_PREVIEW }}
@@ -74,7 +74,7 @@ jobs:
         run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.TEST2_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PREVIEW }}
           SUPABASE_DATABASE_URL: ${{ secrets.TEST7_SUPABASE_DATABASE_URL_PREVIEW }}
           SUPABASE_SCHEMA: ${{ secrets.TEST7_SUPABASE_SCHEMA_PREVIEW }}
