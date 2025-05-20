@@ -20,6 +20,7 @@
     "test3": "pnpm -F \"test3\"",
     "test4": "pnpm -F \"test4\"",
     "test5": "pnpm -F \"test5\"",
-    "test6": "pnpm -F \"test6\""
+    "test6": "pnpm -F \"test6\"",
+    "test7": "pnpm -F \"test6\""
   }
 }
