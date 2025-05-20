@@ -8,7 +8,8 @@
 | Test2 | Supabase、SendGrid、Conform            |
 | Test3 | Conform                                |
 | Test4 | microCMS                               |
-| Test5 | Auth.js                                |
+| Test5 | Auth.js(Google)                        |
+| Test6 | Auth.js(Credential)                    |
 
 ## 開発環境準備
 
