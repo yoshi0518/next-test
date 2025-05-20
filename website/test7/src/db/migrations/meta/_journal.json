@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1747733253095,
+      "tag": "0000_create t_contact",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1747733568286,
+      "tag": "0001_create t_todo",
+      "breakpoints": true
+    }
+  ]
+}
