@@ -8,10 +8,9 @@ export default defineConfig({
   out: './src/db/migrations',
   breakpoints: true,
   dbCredentials: {
-    ssl: false,
-    url: env.SUPABASE_DATABASE_URL,
+    url: env.NEON_DATABASE_URL,
   },
   migrations: {
-    schema: env.SUPABASE_SCHEMA,
+    schema: env.NEON_SCHEMA,
   },
 });

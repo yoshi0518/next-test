@@ -41,12 +41,12 @@ jobs:
       - name: Set Vercel Environment Variables
         run: |
           vercel env rm DEBUG production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
-          vercel env rm SUPABASE_DATABASE_URL production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
-          vercel env rm SUPABASE_SCHEMA production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_DATABASE_URL production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
+          vercel env rm NEON_SCHEMA production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           vercel env rm SENDGRID_API_KEY production --yes --token=${{ secrets.VERCEL_TOKEN }} || true
           echo "${{ secrets.DEBUG_PROD }}" | vercel env add DEBUG production --token=${{ secrets.VERCEL_TOKEN }}
-          echo "${{ secrets.TEST7_SUPABASE_DATABASE_URL_PROD }}" | vercel env add SUPABASE_DATABASE_URL production --token=${{ secrets.VERCEL_TOKEN }}
-          echo "${{ secrets.TEST7_SUPABASE_SCHEMA_PROD }}" | vercel env add SUPABASE_SCHEMA production --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.TEST7_NEON_DATABASE_URL_PROD }}" | vercel env add NEON_DATABASE_URL production --token=${{ secrets.VERCEL_TOKEN }}
+          echo "${{ secrets.TEST7_NEON_SCHEMA_PROD }}" | vercel env add NEON_SCHEMA production --token=${{ secrets.VERCEL_TOKEN }}
           echo "${{ secrets.SENDGRID_API_KEY_PROD }}" | vercel env add SENDGRID_API_KEY production --token=${{ secrets.VERCEL_TOKEN }}
         env:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
@@ -66,8 +66,8 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PROD }}
-          SUPABASE_DATABASE_URL: ${{ secrets.TEST7_SUPABASE_DATABASE_URL_PROD }}
-          SUPABASE_SCHEMA: ${{ secrets.TEST7_SUPABASE_SCHEMA_PROD }}
+          NEON_DATABASE_URL: ${{ secrets.TEST7_NEON_DATABASE_URL_PROD }}
+          NEON_SCHEMA: ${{ secrets.TEST7_NEON_SCHEMA_PROD }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PROD }}
 
       - name: Deploy Project Artifacts to Vercel
@@ -76,6 +76,6 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.TEST7_PROJECT_ID }}
           DEBUG: ${{ secrets.DEBUG_PROD }}
-          SUPABASE_DATABASE_URL: ${{ secrets.TEST7_SUPABASE_DATABASE_URL_PROD }}
-          SUPABASE_SCHEMA: ${{ secrets.TEST7_SUPABASE_SCHEMA_PROD }}
+          NEON_DATABASE_URL: ${{ secrets.TEST7_NEON_DATABASE_URL_PROD }}
+          NEON_SCHEMA: ${{ secrets.TEST7_NEON_SCHEMA_PROD }}
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY_PROD }}
