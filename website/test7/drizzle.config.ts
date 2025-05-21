@@ -8,6 +8,7 @@ export default defineConfig({
   out: './src/db/migrations',
   breakpoints: true,
   dbCredentials: {
+    ssl: false,
     url: env.SUPABASE_DATABASE_URL,
   },
   migrations: {
