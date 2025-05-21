@@ -8,7 +8,7 @@ import { contactTable } from '@/db/schema';
 import { sendMail } from '@/features/contact/lib/sendgrid';
 import { formSchema } from '@/features/contact/types';
 import { parseWithZod } from '@conform-to/zod';
-import { drizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/neon-http';
 
 export const action = async (_: unknown, formData: FormData) => {
   const submission = parseWithZod(formData, { schema: formSchema });
@@ -150,6 +150,6 @@ export const getAddressAction = async (zipcode: string) => {
 };
 
 export const createContactAction = async (data: ContactInsertType) => {
-  const db = drizzle(env.SUPABASE_DATABASE_URL);
+  const db = drizzle(env.NEON_DATABASE_URL);
   return await db.insert(contactTable).values(data).returning({ id: contactTable.id });
 };

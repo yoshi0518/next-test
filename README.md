@@ -10,7 +10,7 @@
 | Test4 | microCMS                               |
 | Test5 | Auth.js(Google)                        |
 | Test6 | Auth.js(Credential)                    |
-| Test7 | Supabase、Drizzle、SendGrid、Conform   |
+| Test7 | Neon、Drizzle、SendGrid、Conform       |
 
 ## 開発環境準備
 
