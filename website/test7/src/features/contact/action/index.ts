@@ -3,6 +3,7 @@
 import type { ContactInsertType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
+import { Logger } from '@/common/lib/pino';
 import { getCurrentDt } from '@/common/lib/utils';
 import { contactTable } from '@/db/schema';
 import { sendMail } from '@/features/contact/lib/sendgrid';
@@ -10,8 +11,14 @@ import { formSchema } from '@/features/contact/types';
 import { parseWithZod } from '@conform-to/zod';
 import { drizzle } from 'drizzle-orm/neon-http';
 
+const logger = new Logger('features/contact/action/index.ts');
+
 export const action = async (_: unknown, formData: FormData) => {
   const submission = parseWithZod(formData, { schema: formSchema });
+
+  logger.info('info log', { func: 'action' });
+  logger.debug('debug log', { func: 'action' });
+  logger.error('error log', { func: 'action' });
 
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
@@ -114,11 +121,8 @@ export const action = async (_: unknown, formData: FormData) => {
     };
     const responseSendMail = await sendMail(data);
 
-    console.log('=== SendMail(data) ===');
-    console.log(JSON.stringify(data, null, 2));
-    console.log('=== SendMail(response) ===');
-    console.log(JSON.stringify(responseSendMail, null, 2));
-    console.log(JSON.stringify(await responseSendMail.json(), null, 2));
+    logger.info('SendMail(data)', { func: 'action', data });
+    logger.info('SendMail(response)', { func: 'action', responseSendMail });
 
     if (!responseSendMail.ok)
       return submission.reply({
@@ -127,7 +131,7 @@ export const action = async (_: unknown, formData: FormData) => {
 
     // === Sendgridメール送信 End ===
   } catch (error) {
-    console.error(JSON.stringify(error, null, 2));
+    logger.error('error', { func: 'action', error });
   }
 
   // 送信完了ページへ遷移
