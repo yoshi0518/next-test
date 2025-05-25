@@ -15,6 +15,7 @@ import {
   SelectValue,
   Textarea,
 } from '@/common/components/ui';
+import { Logger } from '@/common/lib/pino';
 import { getRadioGroupProps, getSelectProps, getSelectTriggerProps } from '@/common/lib/shadcn';
 import { cn } from '@/common/lib/utils';
 import { action, getAddressAction } from '@/features/contact/action';
@@ -24,6 +25,8 @@ import { getFormProps, getInputProps, getTextareaProps, useForm } from '@conform
 import { getZodConstraint, parseWithZod } from '@conform-to/zod';
 import { FaSpinner } from 'react-icons/fa6';
 import { toast } from 'sonner';
+
+const logger = new Logger('features/contact/components/input.tsx');
 
 export const ContactInput: React.FC = () => {
   const [lastResult, dispatch, isPendingForm] = useActionState(action, null);
@@ -61,6 +64,7 @@ export const ContactInput: React.FC = () => {
   // 郵便番号から住所を取得
   const getAddress = async (zipCode: string) => {
     startTransition(async () => {
+      logger.info('郵便番号から住所を取得', { func: 'getAddress' });
       const response = await getAddressAction(zipCode);
       if (!response.status) {
         toast(response.message, {
