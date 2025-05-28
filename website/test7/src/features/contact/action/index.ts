@@ -3,7 +3,7 @@
 import type { ContactInsertType } from '@/features/contact/types';
 import { redirect } from 'next/navigation';
 import { env } from '@/common/env';
-import { Logger } from '@/common/lib/pino';
+import { Logger } from '@/common/lib/logger';
 import { getCurrentDt } from '@/common/lib/utils';
 import { contactTable } from '@/db/schema';
 import { sendMail } from '@/features/contact/lib/sendgrid';
@@ -11,14 +11,10 @@ import { formSchema } from '@/features/contact/types';
 import { parseWithZod } from '@conform-to/zod';
 import { drizzle } from 'drizzle-orm/neon-http';
 
-const logger = new Logger('features/contact/action/index.ts');
+const logger = new Logger('info', false);
 
 export const action = async (_: unknown, formData: FormData) => {
   const submission = parseWithZod(formData, { schema: formSchema });
-
-  logger.info('info log', { func: 'action' });
-  logger.debug('debug log', { func: 'action' });
-  logger.error('error log', { func: 'action' });
 
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
@@ -70,9 +66,6 @@ export const action = async (_: unknown, formData: FormData) => {
       contact,
       createdAt: getCurrentDt(),
     });
-
-    console.log('=== supabase ===');
-    console.log(JSON.stringify(responseSupabase, null, 2));
 
     if (responseSupabase.length === 0) {
       return submission.reply({
@@ -131,7 +124,7 @@ export const action = async (_: unknown, formData: FormData) => {
 
     // === Sendgridメール送信 End ===
   } catch (error) {
-    logger.error('error', { func: 'action', error });
+    logger.error('Error', { func: 'action', error });
   }
 
   // 送信完了ページへ遷移
