@@ -1,0 +1,63 @@
+{
+  "compilerOptions": {
+    // プロジェクト
+    "incremental": true, // .tsbuildinfoを利用してビルド高速化
+    "tsBuildInfoFile": "./.tsbuildinfo", // .tsbuildinfoのファイルパス
+
+    // 言語・環境
+    "target": "es2022", // トランスコンパイル先の構文レベル
+    "lib": ["DOM", "DOM.Iterable", "ESNext"], // 利用可能な組み込みAPI
+    "jsx": "preserve", // JSX構文をそのまま出力
+    "moduleDetection": "force", // 明示的にモジュールと判断するルール(ファイル単位で制御)
+
+    // モジュール
+    "module": "ESNext", // 出力されるモジュール形式(import/exportを維持)
+    "moduleResolution": "Bundler", // バンドラ向けのモジュール解決(Node.jsスタイルではない)
+    "baseUrl": ".", // ルートディレクトリ(相対パスの基準)
+    "paths": {
+      "@/*": ["./src/*"] // "@/"を"src/"にマッピング(エイリアス)
+    },
+    "resolveJsonModule": true, // .jsonファイルをimport可能にする
+
+    // JavaScript サポート
+    "allowJs": true, // JavaScriptファイルの利用を許可
+    "checkJs": true, // JavaScriptファイルにも型チェックを行う
+
+    // Emit
+    "noEmit": true, // トランスコンパイル結果を出力しない
+
+    // Interop Constraints
+    "esModuleInterop": true, // CommonJSのモジュールをESModulesとしてインポート可能にする
+    "isolatedModules": true, // 各ファイルを独立して変換可能にする
+    "verbatimModuleSyntax": true, // import/exportの構文を変更せずそのまま出力
+    "forceConsistentCasingInFileNames": true, // ファイル名の大文字・小文字の不一致を許可しない(OS差異対策)
+
+    // 型チェック
+    "strict": true, // 厳密な型チェックをすべて有効
+    "noFallthroughCasesInSwitch": true, // switch文の意図しないfallthrough(次のcaseへ行くこと)を防止
+    "noUncheckedIndexedAccess": true, // 配列・オブジェクトの要素アクセスを厳密にチェック
+
+    // 完全性
+    "skipLibCheck": true, // node_modules内の型定義ファイルの型チェックをスキップ(高速化)
+
+    // プラグイン
+    "plugins": [
+      {
+        "name": "next" // Next.jsの構文チェックを強化
+      }
+    ]
+  },
+
+  // 型チェック対象
+  "include": [
+    "next-env.d.ts", // Next.js環境用型定義ファイル
+    "**/*.ts", // TypeScript
+    "**/*.tsx", // JSXを含むTypeScript
+    "**/*.cjs", // CommonJS
+    "**/*.js", // JavaScript
+    ".next/types/**/*.ts" // Next.jsの型定義ファイル
+  ],
+
+  // 型チェック対象外
+  "exclude": ["node_modules", ".next", "dist"]
+}

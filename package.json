@@ -21,6 +21,8 @@
     "test4": "pnpm -F \"test4\"",
     "test5": "pnpm -F \"test5\"",
     "test6": "pnpm -F \"test6\"",
-    "test7": "pnpm -F \"test6\""
+    "test7": "pnpm -F \"test7\"",
+    "test8": "pnpm -F \"test8\"",
+    "test9": "pnpm -F \"test9\""
   }
 }
