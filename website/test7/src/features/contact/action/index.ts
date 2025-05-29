@@ -11,10 +11,11 @@ import { formSchema } from '@/features/contact/types';
 import { parseWithZod } from '@conform-to/zod';
 import { drizzle } from 'drizzle-orm/neon-http';
 
-const logger = new Logger('info', false);
+const logger = new Logger(env.DEBUG);
 
 export const action = async (_: unknown, formData: FormData) => {
   const submission = parseWithZod(formData, { schema: formSchema });
+  logger.debug('submission', submission);
 
   // バリデーションエラー
   if (submission.status !== 'success') return submission.reply();
@@ -34,26 +35,10 @@ export const action = async (_: unknown, formData: FormData) => {
     area,
     contact,
   } = submission.value;
-  // console.log('=== Submission Data ===');
-  // console.log({
-  //   entryClassNo,
-  //   entryClassName,
-  //   name,
-  //   zipCode,
-  //   address,
-  //   tel,
-  //   email,
-  //   serviceTypeNo,
-  //   serviceTypeName,
-  //   propertyTypeNo,
-  //   propertyTypeName,
-  //   area,
-  //   contact,
-  // });
 
   try {
-    // === Supabaseデータ追加 Start ===
-    const responseSupabase = await createContactAction({
+    // === Neonデータ追加 Start ===
+    const requestContactAction = {
       entryClass: entryClassNo,
       name,
       zipCode: zipCode ?? null,
@@ -65,14 +50,17 @@ export const action = async (_: unknown, formData: FormData) => {
       area: entryClassNo === 0 ? (area ?? null) : null,
       contact,
       createdAt: getCurrentDt(),
-    });
+    };
+    logger.debug('Neonデータ追加リクエスト', requestContactAction);
+    const responseNeon = await createContactAction(requestContactAction);
+    logger.debug('Neonデータ追加レスポンス', responseNeon);
 
-    if (responseSupabase.length === 0) {
+    if (responseNeon.length === 0) {
       return submission.reply({
         formErrors: ['登録失敗'],
       });
     }
-    // === Supabaseデータ追加 End ===
+    // === Neonデータ追加 End ===
 
     // === Sendgridメール送信 Start ===
     const dynamicTemplateData = {
@@ -87,7 +75,7 @@ export const action = async (_: unknown, formData: FormData) => {
       area: area ?? '　',
       contact: contact.split('\r\n'),
     };
-    const data = {
+    const requestSendMail = {
       template_id: 'd-8673fa79d39d4cc2b11b68ce9a186d11',
       from: {
         name: '株式会社エヌアセット',
@@ -112,10 +100,9 @@ export const action = async (_: unknown, formData: FormData) => {
         email: 'oshirase@n-asset.com',
       },
     };
-    const responseSendMail = await sendMail(data);
-
-    logger.info('SendMail(data)', { func: 'action', data });
-    logger.info('SendMail(response)', { func: 'action', responseSendMail });
+    logger.debug('SendGridメール送信リクエスト', requestSendMail);
+    const responseSendMail = await sendMail(requestSendMail);
+    logger.debug('SendGridメール送信レスポンス', responseSendMail);
 
     if (!responseSendMail.ok)
       return submission.reply({
@@ -140,9 +127,12 @@ export const getAddressAction = async (zipcode: string) => {
       message: '住所取得に失敗しました。お手数ですが直接入力をお願いします',
     };
 
+  const data = (await response.json()) as { new: string; prefecture: string; city: string; suburb: string };
+  logger.debug('郵便番号住所変換レスポンス', data);
+
   return {
     status: true,
-    data: (await response.json()) as { new: string; prefecture: string; city: string; suburb: string },
+    data,
   };
 };
 

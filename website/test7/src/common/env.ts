@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const envSchema = z.object({
-  DEBUG: z.string().transform((value) => !!value),
+  DEBUG: z.string().transform((value) => value === 'true'),
   NEON_DATABASE_URL: z.string(),
   NEON_SCHEMA: z.string(),
   SENDGRID_API_KEY: z.string(),

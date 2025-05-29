@@ -1,26 +1,16 @@
 /* eslint-disable */
-import type { LogLevel } from '@/common/types';
 import { TZDate } from '@date-fns/tz';
 import { format } from 'date-fns';
 
 export const Logger = class {
-  private static logLevelConfig: Record<LogLevel, number> = {
-    debug: 0,
-    info: 1,
-    error: 2,
-  };
+  #debug: boolean = false;
 
-  private logLevel: LogLevel = 'info';
-  private isProduction = false;
-
-  constructor(logLevel: LogLevel = 'info', isProduction = true) {
-    this.logLevel = logLevel;
-    this.isProduction = isProduction;
+  constructor(debug: boolean = false) {
+    this.#debug = debug;
   }
 
-  private log = (logLevel: LogLevel, message: string, ...data: any[]) => {
-    if (this.isProduction) return;
-    if (Logger.logLevelConfig[logLevel] < Logger.logLevelConfig[this.logLevel]) return;
+  private log = (logLevel: 'debug' | 'info' | 'error', message: string, ...data: any[]) => {
+    if (!this.#debug && logLevel === 'debug') return;
 
     const currentDt = format(new TZDate(new Date(), 'Asia/Tokyo'), 'yy/MM/dd HH:mm:ss');
     switch (logLevel) {
@@ -39,7 +29,6 @@ export const Logger = class {
     }
   };
 
-  changeLogLevel = (logLevel: LogLevel) => (this.logLevel = logLevel);
   debug = (message: string, ...data: any[]) => this.log('debug', message, ...data);
   info = (message: string, ...data: any[]) => this.log('info', message, ...data);
   error = (message: string, ...data: any[]) => this.log('error', message, ...data);
