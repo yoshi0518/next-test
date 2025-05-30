@@ -11,5 +11,13 @@ export const Home: React.FC = () => (
         dnd-kit
       </Link>
     </div>
+    <div>
+      <Link
+        href="/table"
+        className="text-blue-500 underline underline-offset-2"
+      >
+        tanstack table
+      </Link>
+    </div>
   </>
 );

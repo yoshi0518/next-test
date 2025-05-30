@@ -1,4 +1,3 @@
-import { Artifika } from 'next/font/google';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { FaArrowsUpDownLeftRight } from 'react-icons/fa6';
