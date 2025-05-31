@@ -11,6 +11,7 @@
 | Test5 | Auth.js(Google)                        |
 | Test6 | Auth.js(Credential)                    |
 | Test7 | Neon、Drizzle、SendGrid、Conform       |
+| Test8 | dnd kit、Tanstack Table、Zustand       |
 
 ## 開発環境準備
 
