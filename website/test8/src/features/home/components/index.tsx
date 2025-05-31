@@ -19,5 +19,21 @@ export const Home: React.FC = () => (
         tanstack table
       </Link>
     </div>
+    <div>
+      <Link
+        href="/zustand1"
+        className="text-blue-500 underline underline-offset-2"
+      >
+        zustand1
+      </Link>
+    </div>
+    <div>
+      <Link
+        href="/zustand2"
+        className="text-blue-500 underline underline-offset-2"
+      >
+        zustand2
+      </Link>
+    </div>
   </>
 );
